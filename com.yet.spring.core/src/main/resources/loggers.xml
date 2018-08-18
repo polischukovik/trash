@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+ 		http://www.springframework.org/schema/beans
+ 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	
+	<bean id="consoleLogger" class="com.yet.spring.core.loggers.ConsoleEventLogger" />
+	
+	<bean id="fileLogger" class="com.yet.spring.core.loggers.FileEventLogger" init-method="init">
+		<constructor-arg value="log.txt"/>
+	</bean>
+	
+	<bean id="cacheFileLogger" class="com.yet.spring.core.loggers.CacheFileLogger" destroy-method="destroy" init-method="init">
+		<constructor-arg value="cachelog.txt"/>
+		<constructor-arg value="5"/>
+	</bean>	
+	
+	<bean id="combineLogger" class="com.yet.spring.core.loggers.CombineLogger" >		
+		<constructor-arg>
+			<list>
+				<ref bean="fileLogger"/>
+				<ref bean="consoleLogger"/>				
+			</list>			
+		</constructor-arg>
+	</bean>
+	
+	<bean id="logDispetcher" class="com.yet.spring.core.loggers.LogDispetcher" >		
+		<constructor-arg>
+			<map>
+				<entry key="INFO" value-ref="consoleLogger"/>
+				<entry key="ERROR" value-ref="combineLogger"/>
+			</map>
+		</constructor-arg>
+		<constructor-arg ref="cacheFileLogger"/>
+	</bean>
+
+</beans>
