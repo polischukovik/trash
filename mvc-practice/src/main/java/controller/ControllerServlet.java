@@ -25,8 +25,6 @@ public class ControllerServlet extends HttpServlet{
 	public void init() throws ServletException {
 		super.init();
 		logger.info("Loading dummy data...");
-		
-		
 	}
 
 	@Override
