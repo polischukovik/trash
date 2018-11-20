@@ -1,3 +1,9 @@
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
+    }
+}
 
 plugins {
     id 'java'
@@ -7,10 +13,31 @@ plugins {
     id "com.palantir.git-version" version "0.12.0-rc2"
 }
 
-group = 'com.mvc-practice'
-//version = '0.0.1-SNAPSHOT'
+group = 'polischukovik'
 sourceCompatibility = 1.8
 version=gitVersion()
+
+
+apply plugin: 'docker'
+
+docker {
+    baseImage "openjdk:8-jdk-alpine"
+    maintainer "Oleksii Polishchuk <polischuk.kiev@gmail.com>"
+    
+}
+
+task buildDocker(type: Docker) {
+    dependsOn 'archiveProduct'
+    push = project.hasProperty('push')
+    
+    runCommand "apk add --no-cache bash"
+    exposePort 8080
+    
+    addFile ("${buildDir}/output/${applicationName}", "${applicationName}")
+    workingDir "${applicationName}"
+
+    defaultCommand(['./start.sh'])
+}
 
 dependencies {
     providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
