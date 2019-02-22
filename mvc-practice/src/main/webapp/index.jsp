@@ -8,7 +8,7 @@
 <link rel="favicon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
 </head>
 <body>
-	<form action="ControllerServlet" method="post">
+	<form action="<%=request.getContextPath()%>/login" method="post">
 		Name: <input type="text" name="name"><br> Password: <input
 			type="password" name="password"><br> <input
 			type="submit" value="login">
