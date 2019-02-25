@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.function.Consumer;
 
 import net.Client;
-import utils.StringUtils;
+import utils.Utils;
 
 public class HttpClient extends Client{
 	private static RequestHandler requestHandler = new RequestHandler();
@@ -25,7 +25,7 @@ public class HttpClient extends Client{
 		
 		requestMessage.append(string);
 		
-		if(string.matches(StringUtils.NEW_LINE_PATTERN)) {			
+		if(string.matches(Utils.NEW_LINE_PATTERN)) {			
 			onRequestReady();
 		}
 	}

@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import exception.HTTPException;
+import http.exception.HTTPException;
 import net.Client;
-import utils.StringUtils;
+import utils.Utils;
 
 public class Response {
 	
@@ -43,7 +43,8 @@ public class Response {
 		client.send(raw);
 
 		System.out.println("========= HTTP Response sent =========");
-		System.out.println(raw);
+		System.out.println(getCaption());
+		System.out.println(getHeader());
 	}
 	
 	public void error(HTTPException e) {
@@ -58,15 +59,19 @@ public class Response {
 		StringBuilder sb = new StringBuilder();
 				
 		sb.append(getCaption())
-			.append(header.entrySet().stream()
-				.map(e -> e.getKey() + ": " + e.getValue())
-				.collect(Collectors.joining("\n")))
-			.append(StringUtils.NEW_LINE)
-			.append(StringUtils.NEW_LINE)
+			.append(getHeader())
+			.append(Utils.NEW_LINE)
+			.append(Utils.NEW_LINE)
 			.append(out.toString())
-			.append(StringUtils.NEW_LINE);
+			.append(Utils.NEW_LINE);
 		
 		return sb.toString();
+	}
+
+	private String getHeader() {
+		return header.entrySet().stream()
+			.map(e -> e.getKey() + ": " + e.getValue())
+			.collect(Collectors.joining("\n"));
 	}
 
 	private String getCaption(){
@@ -74,11 +79,10 @@ public class Response {
 	}
 	
 	private void fillHeader(String body) {
-		header.put("Date", StringUtils.DATE_FORMAT.format(LocalDateTime.now()));
+		header.put("Date", Utils.DATE_FORMAT.format(LocalDateTime.now()));
 		header.put("Server", "MyServer/2.1 (Win 32)");
-		header.put("Last-Modified", StringUtils.DATE_FORMAT.format(LocalDateTime.now()));
+		header.put("Last-Modified", Utils.DATE_FORMAT.format(LocalDateTime.now()));
 		header.put("Content-Length", Integer.toString(body.length()));
-		header.put("Content-Type", "text/html");
 		header.put("Connection", "Closed");
 	}
 
@@ -138,6 +142,10 @@ public class Response {
 	@Override
 	public String toString() {
 		return "Response [status=" + status + ", protocol=" + protocol + ", header=" + header + "]";
+	}
+
+	public void setContentType(String contentType) {
+		header.put("Content-Type", contentType);
 	}
 	
 }

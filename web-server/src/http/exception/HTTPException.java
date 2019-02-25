@@ -1,4 +1,4 @@
-package exception;
+package http.exception;
 
 import http.Response;
 

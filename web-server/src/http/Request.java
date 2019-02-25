@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 
-import utils.StringUtils;
+import utils.Utils;
 
 public class Request {
 	/*
@@ -31,7 +31,7 @@ public class Request {
 	public Request (String message, HttpClient client) {
 		this.client = client;
 		
-		Queue<String> lines = new LinkedList<>(Arrays.asList(message.split(StringUtils.NEW_LINE_PATTERN)));
+		Queue<String> lines = new LinkedList<>(Arrays.asList(message.split(Utils.NEW_LINE_PATTERN)));
 
 		parseCaption(lines.poll());		
 		

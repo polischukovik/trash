@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
-import utils.StringUtils;
+import utils.Utils;
 
 public abstract class Client {
 
@@ -30,7 +30,7 @@ public abstract class Client {
 		this.inputListener = new Thread(() -> {
 			while(in.hasNextLine()) {
 				try {
-					receive(in.nextLine() + StringUtils.NEW_LINE);
+					receive(in.nextLine() + Utils.NEW_LINE);
 				} catch (IllegalStateException e) {
 					e.printStackTrace();
 					disconnect();

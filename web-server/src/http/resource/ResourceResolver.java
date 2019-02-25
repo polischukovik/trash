@@ -1,53 +1,48 @@
-package http;
+package http.resource;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import exception.NotFoundException;
-import utils.StringUtils;
+import http.exception.NotFoundException;
 
-public class FileResponseProvider {
+public class ResourceResolver {
 	private String workDir = ".";
 	private String defaultPath = "index.html";
 	private LinkOption followLinks = LinkOption.NOFOLLOW_LINKS;
 	
 	
-	public FileResponseProvider(String workDir){
+	public ResourceResolver(String workDir){
 		this.workDir = workDir;
 	}
 	
 	private String resolveEmpty(String contextPath) {
-		return "/".equals(contextPath) ? defaultPath : contextPath;
+		return "".equals(contextPath) ? defaultPath : contextPath;
 	}
 	
 	private String stripSlash(String path) {
 		return path.startsWith("/") ? path.substring(1) : path ;
 	}
 	
-	public String provide(String contextPath) throws NotFoundException{		
+	public Path resolve(String contextPath) throws NotFoundException{		
 		String path = resolveEmpty(stripSlash(contextPath));
 		Path work =  Paths.get(workDir).toAbsolutePath();
 		
 		System.out.println("Work directory: " + work);
-				
-		System.out.println("Resolving file: " + work.resolve(path));
+		Path file = work.resolve(path);
+		System.out.println("Resolving file: " + file);
 		
-		if(Files.notExists(Paths.get(workDir).resolve(path), followLinks)){
+		if(Files.notExists(file, followLinks)){
 			throw new NotFoundException("Page not found");			
-		}
+		}				
 		
-		String fileText = "";
-		try {
-			fileText = StringUtils.readFile(workDir + path);
-		} catch (IOException e) {
-			throw new InternalError("Error reading file", e);
-		}
-		
-		return fileText;
+		return file;
 	}
-	
+
+	public Path getResource(String contextPath) throws NotFoundException {
+		String path = resolveEmpty(stripSlash(contextPath));		
+		return resolve(path);
+	}			
 	
 }

@@ -1,25 +1,25 @@
 package http;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import java.nio.file.Path;
 
-import exception.HTTPException;
-import exception.InternalServerError;
-import exception.NotFoundException;
 import http.Response.Status;
+import http.exception.HTTPException;
+import http.resource.ResourceResolver;
+import utils.Utils;
 
 public class RequestHandler {
 	
-	FileResponseProvider provider = new FileResponseProvider("");
+	ResourceResolver resolver = new ResourceResolver(".");
+	MIMEResolver mime = new MIMEResolver();
 	
 	public void handle(Request request, Response response) {
-		
-		String responseText = "";
-		
-		try {
-			responseText = provideResponse(request.getContextPath());
 			
-			write(response, responseText);
+		try {			
+			Path resource = resolver.getResource(request.getContextPath());
+			
+			response.setContentType(mime.getContentType(Utils.getExtension(resource)));
+			
+			Utils.write(response.getOutputStream(), resource);
 			
 			response.setStatus(Status.OK);
 		} catch (HTTPException e) {
@@ -27,22 +27,5 @@ public class RequestHandler {
 			response.error(e);
 		}		
 	}
-
-	private String provideResponse(String forPath) throws NotFoundException {
-		return provider.provide(forPath);
-	}
 	
-	private static void write(Response response, String responseText) throws InternalServerError {
-		OutputStream os = response.getOutputStream();
-		
-		char[] arr = responseText.toCharArray();
-		
-		for(int i = 0; i < arr.length; i++) {
-			try {
-				os.write(arr[i]);
-			} catch (IOException e) {
-				throw new InternalServerError("ERROR Exeption when writing response");
-			}
-		}
-	}
 }
