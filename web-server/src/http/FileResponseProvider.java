@@ -3,6 +3,7 @@ package http;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import exception.NotFoundException;
@@ -22,13 +23,20 @@ public class FileResponseProvider {
 		return "/".equals(contextPath) ? defaultPath : contextPath;
 	}
 	
+	private String stripSlash(String path) {
+		return path.startsWith("/") ? path.substring(1) : path ;
+	}
+	
 	public String provide(String contextPath) throws NotFoundException{		
-		String path = resolveEmpty(contextPath);
+		String path = resolveEmpty(stripSlash(contextPath));
+		Path work =  Paths.get(workDir).toAbsolutePath();
 		
-		System.out.println("Resolving file: " + Paths.get(path).toAbsolutePath());
+		System.out.println("Work directory: " + work);
+				
+		System.out.println("Resolving file: " + work.resolve(path));
 		
-		if(Files.notExists(Paths.get(workDir + path), followLinks)){
-			throw new NotFoundException("Page not found");
+		if(Files.notExists(Paths.get(workDir).resolve(path), followLinks)){
+			throw new NotFoundException("Page not found");			
 		}
 		
 		String fileText = "";

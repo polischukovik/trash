@@ -23,10 +23,9 @@ public class RequestHandler {
 			
 			response.setStatus(Status.OK);
 		} catch (HTTPException e) {
-			response.error(e);
 			e.printStackTrace();
-		}
-		
+			response.error(e);
+		}		
 	}
 
 	private String provideResponse(String forPath) throws NotFoundException {
